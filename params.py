@@ -3,7 +3,7 @@ import json
 
 project_dir = os.path.dirname(os.path.realpath(__file__))
 
-db_url = f"sqlite:///{os.path.join(project_dir, 'Gideon/database/db.sqlite')}"
+db_url = f"sqlite:///{os.path.join(project_dir, 'db.sqlite')}"
 
 todd_path = os.path.join(project_dir, 'Gideon/lib/todd.jar')
 downloads_dir = os.path.join(project_dir, 'downloads')

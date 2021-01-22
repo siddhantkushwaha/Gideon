@@ -55,12 +55,12 @@ class EPatrika(Spider):
                 if key == 'language':
                     language = value
 
-            link_by_newspaper_edition = li.xpath('./a[1]/@href').extract_first()
-            link_by_newspaper_edition = response.urljoin(link_by_newspaper_edition)
+            link = li.xpath('./a[1]/@href').extract_first()
+            link = response.urljoin(link)
 
             yield Request(
                 method='GET',
-                url=link_by_newspaper_edition,
+                url=link,
                 callback=self.get_days,
                 meta={'newspaper': newspaper, 'edition': edition, 'language': language}
             )
@@ -79,11 +79,22 @@ class EPatrika(Spider):
             language_for_day = li.xpath('./p[2]/text()').extract_first()
             language_for_day = language_for_day.replace(':', '').strip().lower()
 
+            title = li.xpath('./span/a[1]//text()').extract_first().strip().lower()
+
+            paper_type = 'none'
+            if 'editorial' in title:
+                paper_type = 'editorial'
+            elif 'magazine' in title:
+                paper_type = 'magazine'
+            elif 'adfree' in title:
+                paper_type = 'adfree'
+
             link = li.xpath('.//a[1]/@href').extract_first()
             newspaper_obj = self.db.session.query(Newspaper).filter_by(
                 name=newspaper,
                 edition=edition,
                 language=language_for_day,
+                type=paper_type,
                 timestamp=date
             ).one_or_none()
 
@@ -92,9 +103,10 @@ class EPatrika(Spider):
                     name=newspaper,
                     edition=edition,
                     language=language_for_day,
+                    type=paper_type,
                     timestamp=date,
                     link=link,
-                    drive_file_id='NOT_IMPLEMENTED'
+                    drive_file_id='NONE'
                 )
                 self.db.session.add(newspaper_obj)
 

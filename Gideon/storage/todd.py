@@ -1,7 +1,7 @@
 import logging
 import subprocess
 
-from params import todd_path, downloads_dir
+from params import todd_path
 
 
 def download(file_id, download_dir):
@@ -16,10 +16,12 @@ def download(file_id, download_dir):
     stderr = process.stderr.read().decode()
 
     if len(stdout) > 0:
-        logging.debug(stdout)
+        logging.info(stdout)
 
     if len(stderr) > 0:
         logging.error(stderr)
+
+    return 'Download successful.' in stdout
 
 
 def upload(file_path, parent_folder_id):
@@ -34,11 +36,14 @@ def upload(file_path, parent_folder_id):
     stderr = process.stderr.read().decode()
 
     if len(stdout) > 0:
-        logging.debug(stdout)
+        logging.info(stdout)
 
     if len(stderr) > 0:
         logging.error(stderr)
 
-
-if __name__ == '__main__':
-    download('17gKW1EkDRosvrwmnKbz9VLpus58jiByq', downloads_dir)
+    idx = stdout.find('Uploaded:')
+    if idx > -1:
+        file_id = stdout[idx + 10:].strip()
+        return file_id if len(file_id) == 33 else None
+    else:
+        return None
