@@ -6,13 +6,10 @@ from Gideon.common import set_log_level
 from Gideon.database.database import Database
 from Gideon.database.models import Newspaper
 from Gideon.storage.todd import download, upload
-from params import project_dir, db_url, downloads_dir, newspaper_archive_drive_folder_id
+from params import db_url, downloads_dir, newspaper_archive_drive_folder_id
 
 
 def sync(clear_cache=True):
-    # change current working directory (to pick jar tokens correctly)
-    os.chdir(project_dir)
-
     db = Database(db_url)
     papers = db.session.query(Newspaper).filter_by(drive_file_id='NONE').all()
     for paper in papers:
