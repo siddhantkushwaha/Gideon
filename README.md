@@ -1,2 +1,2 @@
 # Gideon
-Bot that collects delivers newspapers.
+Bot that collects and delivers newspapers.
